@@ -22,7 +22,13 @@ func Run(ctx context.Context) error {
 		}
 	}()
 
-	httpHandler := newHandler()
+	shortUrlDAO, err := NewUrlDAO(ctx, client)
+	if err != nil {
+		return err
+	}
+
+	service := NewService(shortUrlDAO)
+	httpHandler := newHandler(service)
 
 	return http.ListenAndServe(":8080", initEndpoint(httpHandler))
 }
