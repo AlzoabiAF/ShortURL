@@ -70,3 +70,15 @@ func (dao *UrlDAO) DeleteByID(ctx context.Context, id string) error {
 	}
 	return nil
 }
+
+func (dao *UrlDAO) Update(ctx context.Context, url *ShortURL) error {
+	filter := bson.D{{Key: "_id", Value: url.ID}}
+	result, err := dao.collection.ReplaceOne(ctx, filter, url)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount == 0 {
+		return errors.Errorf("not found")
+	}
+	return nil
+}
