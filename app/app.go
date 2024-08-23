@@ -36,11 +36,11 @@ func Run(ctx context.Context) error {
 func initEndpoint(h *Handler) *echo.Echo {
 	router := echo.New()
 
-	router.POST("/shorten", h.Shorten)
-	router.GET("/:shortURL", h.GetFullURL)
-	router.DELETE("/:shortURL", h.Delete)
-	router.POST("/update/:shortUrl", h.Update)
-	router.GET("/ping", h.Ping)
+	router.POST("/shorten", WrapEndpoint(h.Shorten))
+	router.GET("/:shortURL", WrapEndpoint(h.GetFullURL))
+	router.DELETE("/:shortURL", WrapEndpoint(h.Delete))
+	router.POST("/update/:shortUrl", WrapEndpoint(h.Update))
+	router.GET("/ping", WrapEndpoint(h.Ping))
 
 	return router
 }

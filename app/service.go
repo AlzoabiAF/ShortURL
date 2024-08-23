@@ -67,7 +67,7 @@ func (s *Service) generateRandomID() string {
 	const idLenght = 6
 	id := make([]rune, idLenght)
 	for i := range id {
-		id[i] = s.rnd.Int32()
+		id[i] = symbols[s.rnd.IntN(len(symbols))]
 	}
 	return string(id)
 }
