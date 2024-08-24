@@ -29,18 +29,18 @@ func (h *Handler) Shorten(ctx echo.Context) (interface{}, error) {
 	body, err := io.ReadAll(ctx.Request().Body)
 	if err != nil {
 		log.Printf("Failed reading body request: %v", err)
-		return nil, ctx.String(http.StatusInternalServerError, "")
+		return nil, err
 	}
 
 	var reqJson UrlRequest
 	if err = json.Unmarshal(body, &reqJson); err != nil {
 		log.Printf("Failed unmarshaling body: %v", err)
-		return nil, ctx.String(http.StatusInternalServerError, "")
+		return nil, err
 	}
 
 	if _, err = url.ParseRequestURI(reqJson.Url); err != nil {
 		log.Printf("Failed parse request URI: %v", err)
-		return nil, ctx.String(http.StatusInternalServerError, "")
+		return nil, err
 	}
 
 	return h.service.Shorten(ctx.Request().Context(), reqJson.Url, reqJson.TTLDays)
@@ -51,10 +51,10 @@ func (h *Handler) Ping(ctx echo.Context) (interface{}, error) {
 }
 
 func (h *Handler) Update(ctx echo.Context) (interface{}, error) {
-	id := ctx.Request().PathValue("shortUrl")
+	id := ctx.Param("shortUrl")
 	body, err := io.ReadAll(ctx.Request().Body)
 	if err != nil {
-		return nil, echo.ErrBadGateway
+		return nil, err
 	}
 	
 	var reqJson UrlRequest
@@ -71,12 +71,14 @@ func (h *Handler) Update(ctx echo.Context) (interface{}, error) {
 }
 
 func (h *Handler) GetFullURL(ctx echo.Context) (interface{}, error) {
-	shortUrl := ctx.Request().PathValue("shortUrl")
+	shortUrl := ctx.Param("shortUrl")
+	log.Println(shortUrl)
 	return h.service.GetFullURL(ctx.Request().Context(), shortUrl)
 }
 
 func (h *Handler) Delete(ctx echo.Context) (interface{}, error) {
-	id := ctx.Request().PathValue("shortUrl")
+	id := ctx.Param("shortUrl")
+	log.Println(id)
 	return nil, h.service.Delete(ctx.Request().Context(), id)
 }
 

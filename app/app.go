@@ -11,12 +11,12 @@ import (
 )
 
 func Run(ctx context.Context) error {
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://127.0.0.1:27017"))
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://mongo:27017/"))
 	if err != nil {
-
+		return err
 	}
 
-	defer func () {
+	defer func() {
 		if err := client.Disconnect(ctx); err != nil {
 			log.Println(err)
 		}
@@ -37,8 +37,8 @@ func initEndpoint(h *Handler) *echo.Echo {
 	router := echo.New()
 
 	router.POST("/shorten", WrapEndpoint(h.Shorten))
-	router.GET("/:shortURL", WrapEndpoint(h.GetFullURL))
-	router.DELETE("/:shortURL", WrapEndpoint(h.Delete))
+	router.GET("/:shortUrl", WrapEndpoint(h.GetFullURL))
+	router.DELETE("/delete/:shortUrl", WrapEndpoint(h.Delete))
 	router.POST("/update/:shortUrl", WrapEndpoint(h.Update))
 	router.GET("/ping", WrapEndpoint(h.Ping))
 
